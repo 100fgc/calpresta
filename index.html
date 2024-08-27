@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Préstamos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f4f8;
+            color: #333333;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 450px;
+            margin: 20px auto;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            font-size: 28px;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+        input[type="number"], input[type="text"] {
+            width: calc(100% - 22px);
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        input[type="number"]:focus, input[type="text"]:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        #result {
+            margin-top: 30px;
+            background-color: #e8f4fd;
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        .switch-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background-color: #f7f7f7;
+            padding: 10px 15px;
+            border-radius: 8px;
+        }
+        .switch-container label {
+            margin-bottom: 0;
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        .manual-input {
+            display: none;
+            margin-bottom: 20px;
+        }
+        button {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            width: 100%;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #2ecc71;
+        }
+        #result p {
+            margin: 10px 0;
+            color: #34495e;
+        }
+        #result p:first-child {
+            font-weight: 700;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Calculadora de Préstamos</h2>
+        <label for="loanAmount">Monto del Préstamo:</label>
+        <input type="number" id="loanAmount" placeholder="Ingrese el monto del préstamo">
+
+        <label for="loanTerm">Plazo (meses):</label>
+        <input type="number" id="loanTerm" placeholder="Ingrese el plazo en meses">
+
+        <div class="switch-container">
+            <label for="manualSwitch">Modo Manual:</label>
+            <label class="switch">
+                <input type="checkbox" id="manualSwitch">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div id="manualRateContainer" class="manual-input">
+            <label for="manualRate">Tasa de Interés (%)</label>
+            <input type="number" id="manualRate" placeholder="Ingrese la tasa de interés">
+        </div>
+
+        <button onclick="calculateLoan()">Calcular</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const manualSwitch = document.getElementById('manualSwitch');
+        const manualRateContainer = document.getElementById('manualRateContainer');
+
+        manualSwitch.addEventListener('change', function() {
+            if (this.checked) {
+                manualRateContainer.style.display = 'block';
+            } else {
+                manualRateContainer.style.display = 'none';
+            }
+        });
+
+        function calculateLoan() {
+            const amount = parseFloat(document.getElementById('loanAmount').value);
+            const termMonths = parseFloat(document.getElementById('loanTerm').value);
+            const isManual = manualSwitch.checked;
+            let rate;
+
+            if (isNaN(amount) || isNaN(termMonths)) {
+                alert('Por favor, ingrese valores válidos.');
+                return;
+            }
+
+            if (isManual) {
+                rate = parseFloat(document.getElementById('manualRate').value);
+                if (isNaN(rate)) {
+                    alert('Por favor, ingrese una tasa de interés válida.');
+                    return;
+                }
+            } else {
+                rate = getInterestRate(amount, termMonths);
+            }
+
+            const termWeeks = Math.round(termMonths * 4);
+            const totalAmount = amount * (1 + (rate / 100) * termMonths);
+            const weeklyPayment = totalAmount / termWeeks;
+
+            const today = new Date();
+            const dueDate = new Date(today.getTime() + termWeeks * 7 * 24 * 60 * 60 * 1000);
+
+            document.getElementById('result').innerHTML = `
+                <p>Resumen del Préstamo:</p>
+                <p>Tasa de interés mensual: ${rate}%</p>
+                <p>Monto total a pagar: C$${totalAmount.toFixed(2)}</p>
+                <p>Cuota semanal: C$${weeklyPayment.toFixed(2)}</p>
+                <p>Plazo: ${termWeeks} semanas (${termMonths} meses)</p>
+                <p>Fecha de vencimiento: ${dueDate.toLocaleDateString()}</p>
+            `;
+        }
+
+        function getInterestRate(amount, termMonths) {
+            if (amount >= 50000 && amount < 99999 && termMonths >= 6) {
+                return 10;
+            } else if (amount >= 100000 && termMonths >= 6) {
+                return 9;
+            } else if (amount >= 3000 && amount <= 3999) {
+                return 18;
+            } else if (amount >= 4000 && amount <= 20999) {
+                return 15;
+            } else if (amount >= 21000 && amount <= 30999) {
+                return 14;
+            } else if (amount >= 31000 && amount <= 50999) {
+                return 13;
+            } else if (amount >= 51000 && amount <= 80999) {
+                return 12;
+            } else if (amount >= 81000) {
+                return 11;
+            }
+
+            // Si no se cumple ninguna condición, retornamos un valor por defecto
+            return 15;
+        }
+    </script>
+</body>
+</html>
