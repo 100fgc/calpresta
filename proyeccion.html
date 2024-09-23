@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proyección al Cierre</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f4f8;
+            color: #333333;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 450px;
+            margin: 20px auto;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            font-size: 28px;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+        input[type="number"]:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        #result {
+            margin-top: 30px;
+            background-color: #e8f4fd;
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            width: 100%;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #2ecc71;
+        }
+        #result p {
+            margin: 10px 0;
+            color: #34495e;
+        }
+        #result p:first-child {
+            font-weight: 700;
+            color: #2c3e50;
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .button-container button {
+            width: 48%;
+            margin-top: 0;
+            font-size: 14px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="button-container">
+            <button onclick="window.location.href='index.html'">Calculadora Préstamo</button>
+            <button onclick="window.location.href='proyeccion.html'" style="background-color: #3498db;">Proyección al cierre</button>
+        </div>
+        <h2>Proyección al Cierre</h2>
+        <label for="saldoCartera">Saldo Cartera:</label>
+        <input type="number" id="saldoCartera" placeholder="Ingrese el saldo de cartera">
+
+        <label for="moraCorriente">Mora Corriente:</label>
+        <input type="number" id="moraCorriente" placeholder="Ingrese la mora corriente">
+
+        <label for="moraVencida">Mora Vencida:</label>
+        <input type="number" id="moraVencida" placeholder="Ingrese la mora vencida">
+
+        <label for="recuperacionDia">Recuperación del Día:</label>
+        <input type="number" id="recuperacionDia" placeholder="Ingrese la recuperación del día">
+
+        <label for="recaudado">Recaudado:</label>
+        <input type="number" id="recaudado" placeholder="Ingrese el monto recaudado">
+
+        <label for="colocacionDia">Colocación del Día:</label>
+        <input type="number" id="colocacionDia" placeholder="Ingrese la colocación del día">
+
+        <button onclick="calcularProyeccion()">Calcular Proyección</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function calcularProyeccion() {
+            const saldoCartera = parseFloat(document.getElementById('saldoCartera').value) || 0;
+            const moraCorriente = parseFloat(document.getElementById('moraCorriente').value) || 0;
+            const moraVencida = parseFloat(document.getElementById('moraVencida').value) || 0;
+            const recuperacionDia = parseFloat(document.getElementById('recuperacionDia').value) || 0;
+            const recaudado = parseFloat(document.getElementById('recaudado').value) || 0;
+            const colocacionDia = parseFloat(document.getElementById('colocacionDia').value) || 0;
+
+            const totalMora = moraCorriente + moraVencida;
+            const totalMoraCierre = totalMora - recuperacionDia - recaudado;
+            const saldoCarteraFinal = saldoCartera - recaudado + colocacionDia;
+            const indiceMora = (totalMoraCierre / saldoCarteraFinal) * 100;
+
+            document.getElementById('result').innerHTML = `
+                <p>Resumen de la Proyección:</p>
+                <p>Total Mora: C$${totalMora.toFixed(2)}</p>
+                <p>Total Mora al Cierre: C$${totalMoraCierre.toFixed(2)}</p>
+                <p>Saldo Cartera Final: C$${saldoCarteraFinal.toFixed(2)}</p>
+                <p>Índice de Mora: ${indiceMora.toFixed(2)}%</p>
+            `;
+        }
+    </script>
+</body>
+</html>
