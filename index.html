@@ -30,18 +30,29 @@
             margin-bottom: 30px;
             font-weight: 700;
         }
-        input[type="number"], input[type="text"] {
-            width: calc(100% - 22px);
+        input[type="number"], input[type="text"], select {
+            width: 100%;
             padding: 12px;
             margin-bottom: 20px;
             border: 2px solid #e0e0e0;
             border-radius: 8px;
             font-size: 16px;
             transition: border-color 0.3s ease;
+            box-sizing: border-box;
         }
-        input[type="number"]:focus, input[type="text"]:focus {
+        input[type="number"]:focus, input[type="text"]:focus, select:focus {
             border-color: #3498db;
             outline: none;
+        }
+        select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg fill="%23333333" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 20px;
+            padding-right: 30px;
         }
         label {
             display: block;
@@ -135,16 +146,38 @@
             font-weight: 700;
             color: #2c3e50;
         }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .button-container button {
+            width: 48%;
+            margin-top: 0;
+            font-size: 14px;
+            padding: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <div class="button-container">
+            <button onclick="window.location.href='index.html'" style="background-color: #3498db;">Calculadora Préstamo</button>
+            <button onclick="window.location.href='proyeccion.html'">Proyección al cierre</button>
+        </div>
         <h2>Calculadora de Préstamos</h2>
         <label for="loanAmount">Monto del Préstamo:</label>
         <input type="number" id="loanAmount" placeholder="Ingrese el monto del préstamo">
 
         <label for="loanTerm">Plazo (meses):</label>
         <input type="number" id="loanTerm" placeholder="Ingrese el plazo en meses">
+
+        <label for="paymentMode">Modalidad de Pago:</label>
+        <select id="paymentMode">
+            <option value="weekly">Semanal</option>
+            <option value="biweekly">Quincenal</option>
+            <option value="monthly">Mensual</option>
+        </select>
 
         <div class="switch-container">
             <label for="manualSwitch">Modo Manual:</label>
@@ -178,6 +211,7 @@
         function calculateLoan() {
             const amount = parseFloat(document.getElementById('loanAmount').value);
             const termMonths = parseFloat(document.getElementById('loanTerm').value);
+            const paymentMode = document.getElementById('paymentMode').value;
             const isManual = manualSwitch.checked;
             let rate;
 
@@ -196,19 +230,34 @@
                 rate = getInterestRate(amount, termMonths);
             }
 
-            const termWeeks = Math.round(termMonths * 4);
+            let termPeriods, periodLabel;
+            switch(paymentMode) {
+                case 'weekly':
+                    termPeriods = Math.round(termMonths * 4);
+                    periodLabel = 'semanas';
+                    break;
+                case 'biweekly':
+                    termPeriods = Math.round(termMonths * 2);
+                    periodLabel = 'quincenas';
+                    break;
+                case 'monthly':
+                    termPeriods = termMonths;
+                    periodLabel = 'meses';
+                    break;
+            }
+
             const totalAmount = amount * (1 + (rate / 100) * termMonths);
-            const weeklyPayment = totalAmount / termWeeks;
+            const periodPayment = totalAmount / termPeriods;
 
             const today = new Date();
-            const dueDate = new Date(today.getTime() + termWeeks * 7 * 24 * 60 * 60 * 1000);
+            const dueDate = new Date(today.getTime() + termPeriods * (paymentMode === 'weekly' ? 7 : paymentMode === 'biweekly' ? 14 : 30) * 24 * 60 * 60 * 1000);
 
             document.getElementById('result').innerHTML = `
                 <p>Resumen del Préstamo:</p>
                 <p>Tasa de interés mensual: ${rate}%</p>
                 <p>Monto total a pagar: C$${totalAmount.toFixed(2)}</p>
-                <p>Cuota semanal: C$${weeklyPayment.toFixed(2)}</p>
-                <p>Plazo: ${termWeeks} semanas (${termMonths} meses)</p>
+                <p>Cuota ${paymentMode === 'weekly' ? 'semanal' : paymentMode === 'biweekly' ? 'quincenal' : 'mensual'}: C$${periodPayment.toFixed(2)}</p>
+                <p>Plazo: ${termPeriods} ${periodLabel} (${termMonths} meses)</p>
                 <p>Fecha de vencimiento: ${dueDate.toLocaleDateString()}</p>
             `;
         }
