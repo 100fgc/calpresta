@@ -4,51 +4,66 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora de Préstamos</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="favicon.png">
     <style>
+        :root {
+            --primary-color: #6a11cb;
+            --secondary-color: #2575fc;
+            --accent-color: #ffa500;
+            --background-color: #f0f8ff;
+            --card-color: #ffffff;
+            --text-color: #333333;
+            --border-radius: 15px;
+        }
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f0f4f8;
-            color: #333333;
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, var(--background-color), #e6f2ff);
+            color: var(--text-color);
             margin: 0;
             padding: 20px;
             line-height: 1.6;
+            min-height: 100vh;
         }
         .container {
-            max-width: 450px;
-            margin: 20px auto;
+            max-width: 550px;
+            margin: 40px auto;
             padding: 30px;
-            background-color: #ffffff;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            background-color: var(--card-color);
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 30px rgba(37, 117, 252, 0.1);
+            transition: all 0.3s ease;
+        }
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(37, 117, 252, 0.2);
         }
         h2 {
             text-align: center;
-            color: #2c3e50;
-            font-size: 28px;
+            color: var(--primary-color);
+            font-size: 36px;
             margin-bottom: 30px;
             font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
         input[type="number"], input[type="text"], select {
             width: 100%;
             padding: 12px;
             margin-bottom: 20px;
             border: 2px solid #e0e0e0;
-            border-radius: 8px;
+            border-radius: var(--border-radius);
             font-size: 16px;
-            transition: border-color 0.3s ease;
+            transition: all 0.3s ease;
             box-sizing: border-box;
         }
         input[type="number"]:focus, input[type="text"]:focus, select:focus {
-            border-color: #3498db;
+            border-color: var(--secondary-color);
             outline: none;
+            box-shadow: 0 0 0 3px rgba(37, 117, 252, 0.1);
         }
         select {
             appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            background-image: url('data:image/svg+xml;utf8,<svg fill="%23333333" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+            background-image: url('data:image/svg+xml;utf8,<svg fill="%236a11cb" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
             background-repeat: no-repeat;
             background-position: right 10px center;
             background-size: 20px;
@@ -57,24 +72,29 @@
         label {
             display: block;
             margin-bottom: 8px;
-            font-weight: 500;
-            color: #2c3e50;
+            font-weight: 600;
+            color: var(--primary-color);
         }
         #result {
             margin-top: 30px;
-            background-color: #e8f4fd;
+            background: linear-gradient(135deg, #e6f2ff, #f0f8ff);
             padding: 20px;
-            border-radius: 8px;
+            border-radius: var(--border-radius);
             font-size: 16px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
         }
         .switch-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
-            background-color: #f7f7f7;
+            background-color: #f0f8ff;
             padding: 10px 15px;
-            border-radius: 8px;
+            border-radius: var(--border-radius);
+            transition: all 0.3s ease;
+        }
+        .switch-container:hover {
+            background-color: #e6f2ff;
         }
         .switch-container label {
             margin-bottom: 0;
@@ -82,8 +102,8 @@
         .switch {
             position: relative;
             display: inline-block;
-            width: 50px;
-            height: 24px;
+            width: 60px;
+            height: 34px;
         }
         .switch input {
             opacity: 0;
@@ -104,8 +124,8 @@
         .slider:before {
             position: absolute;
             content: "";
-            height: 16px;
-            width: 16px;
+            height: 26px;
+            width: 26px;
             left: 4px;
             bottom: 4px;
             background-color: white;
@@ -113,7 +133,7 @@
             border-radius: 50%;
         }
         input:checked + .slider {
-            background-color: #2196F3;
+            background-color: var(--secondary-color);
         }
         input:checked + .slider:before {
             transform: translateX(26px);
@@ -123,20 +143,22 @@
             margin-bottom: 20px;
         }
         button {
-            background-color: #27ae60;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
             border: none;
             padding: 14px;
-            border-radius: 8px;
+            border-radius: var(--border-radius);
             width: 100%;
             cursor: pointer;
             font-size: 18px;
             font-weight: 600;
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
             margin-top: 20px;
         }
         button:hover {
-            background-color: #2ecc71;
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         #result p {
             margin: 10px 0;
@@ -144,7 +166,8 @@
         }
         #result p:first-child {
             font-weight: 700;
-            color: #2c3e50;
+            color: var(--primary-color);
+            font-size: 20px;
         }
         .button-container {
             display: flex;
@@ -157,26 +180,64 @@
             font-size: 14px;
             padding: 10px;
         }
+        .input-with-buttons {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            background-color: #f0f8ff;
+            border-radius: var(--border-radius);
+            padding: 5px;
+        }
+        .input-with-buttons input {
+            flex-grow: 1;
+            margin-bottom: 0;
+            text-align: center;
+            border: none;
+            background: transparent;
+        }
+        .input-with-buttons button {
+            width: 40px;
+            height: 40px;
+            margin: 0 5px;
+            padding: 0;
+            font-size: 20px;
+            line-height: 1;
+            background: var(--accent-color);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        .input-with-buttons button:hover {
+            background: #ff8c00;
+            transform: scale(1.1);
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="button-container">
-            <button onclick="window.location.href='index.html'" style="background-color: #3498db;">Calculadora Préstamo</button>
-            <button onclick="window.location.href='proyeccion.html'">Proyección al cierre</button>
+            <button onclick="window.location.href='index.html'" style="background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));">Calculadora Préstamo</button>
+            <button onclick="window.location.href='proyeccion.html'" style="background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));">Proyección al cierre</button>
         </div>
         <h2>Calculadora de Préstamos</h2>
         <label for="loanAmount">Monto del Préstamo:</label>
-        <input type="number" id="loanAmount" placeholder="Ingrese el monto del préstamo">
+        <div class="input-with-buttons">
+            <button onclick="adjustAmount(-500)">-</button>
+            <input type="number" id="loanAmount" placeholder="Ingrese el monto del préstamo">
+            <button onclick="adjustAmount(500)">+</button>
+        </div>
 
         <label for="loanTerm">Plazo (meses):</label>
-        <input type="number" id="loanTerm" placeholder="Ingrese el plazo en meses">
+        <div class="input-with-buttons">
+            <button onclick="adjustTerm(-1)">-</button>
+            <input type="number" id="loanTerm" placeholder="Ingrese el plazo en meses">
+            <button onclick="adjustTerm(1)">+</button>
+        </div>
 
         <label for="paymentMode">Modalidad de Pago:</label>
         <select id="paymentMode">
-            <option value="weekly">Semanal</option>
-            <option value="biweekly">Quincenal</option>
             <option value="monthly">Mensual</option>
+            <option value="biweekly">Quincenal</option>
+            <option value="weekly">Semanal</option>
         </select>
 
         <div class="switch-container">
@@ -207,6 +268,22 @@
                 manualRateContainer.style.display = 'none';
             }
         });
+
+        function adjustAmount(change) {
+            const amountInput = document.getElementById('loanAmount');
+            let currentAmount = parseFloat(amountInput.value) || 0;
+            currentAmount += change;
+            if (currentAmount < 0) currentAmount = 0;
+            amountInput.value = currentAmount;
+        }
+
+        function adjustTerm(change) {
+            const termInput = document.getElementById('loanTerm');
+            let currentTerm = parseInt(termInput.value) || 0;
+            currentTerm += change;
+            if (currentTerm < 1) currentTerm = 1;
+            termInput.value = currentTerm;
+        }
 
         function calculateLoan() {
             const amount = parseFloat(document.getElementById('loanAmount').value);
@@ -263,7 +340,11 @@
         }
 
         function getInterestRate(amount, termMonths) {
-            if (amount >= 50000 && amount < 99999 && termMonths >= 6) {
+            if ((termMonths == 4 || termMonths == 5) && amount >= 5000) {
+                return 12;
+            } else if (termMonths >= 6 && termMonths <= 12 && amount >= 5000) {
+                return 10;
+            } else if (amount >= 50000 && amount < 99999 && termMonths >= 6) {
                 return 10;
             } else if (amount >= 100000 && termMonths >= 6) {
                 return 9;
